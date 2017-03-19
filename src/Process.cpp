@@ -1,4 +1,5 @@
 #include "ZLauncher.h"
+#include <algorithm>
 
 bool Process::isElevated(HANDLE process)
 {
@@ -172,4 +173,48 @@ str Process::name(HANDLE process)
 str Process::parentName(DWORD pid)
 {
     return Process::name(Process::findParent(pid));
+}
+
+bool Process::setAffinity(HANDLE process, vector<int> cores)
+{
+    if(cores.size() == 0) return false;
+
+    DWORD processAffinityMask, systemAffinityMask;
+
+    if(!GetProcessAffinityMask(process, &processAffinityMask, &systemAffinityMask)) return false;
+
+    DWORD mask = 0x1;
+    for(int bit = 0, core = 0; bit < 64; bit++)
+    {
+        if (mask & processAffinityMask)
+        {
+            if (std::find(cores.begin(), cores.end(), core) == cores.end())
+            {
+                processAffinityMask &= ~mask;
+            }
+            core++;
+        }
+        mask = mask << 1;
+    }
+
+    return SetProcessAffinityMask(process, processAffinityMask);
+}
+
+bool Process::setAffinity(HANDLE process, str cores)
+{
+    if(cores.empty()) return false;
+
+    vector<int> c;
+
+    sstream ss(cores);
+    int i;
+    while (ss >> i)
+    {
+        c.push_back(i);
+
+        if(ss.peek() == ',' || ss.peek() == ' ')
+            ss.ignore();
+    }
+
+    return Process::setAffinity(process, c);
 }

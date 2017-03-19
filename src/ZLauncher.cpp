@@ -15,7 +15,7 @@ bool elevated, gameIsLaunched, launchedFromSteam;
 
 str cfg = L"zlauncher.ini";
 
-str cemu, cemu_path, game_path, speedhack_path, cemu_cmdline, steam_path, steam_gameid, steam_cmdline;
+str cemu, cemu_path, cemu_cmdline, cemu_cores, game_path, speedhack_path, steam_path, steam_gameid, steam_cmdline;
 bool cemu_fullscreen, game_elevate, speedhack_enabled, steam_enabled, steam_elevate;
 
 static void mb(LPTSTR msg, LPTSTR title = L"Error", UINT flags = MB_ICONERROR)
@@ -146,6 +146,7 @@ bool ZLauncher::parseConfig()
     game_path = Utils::getConfigString(L"game", L"path");
 
     cemu_cmdline = Utils::getConfigString(L"cemu", L"cmdline");
+    cemu_cores = Utils::getConfigString(L"cemu", L"cores");
     cemu_fullscreen = Utils::getConfigBool(L"cemu", L"fullscreen", true);
     game_elevate = Utils::getConfigBool(L"game", L"elevate", false);
 
@@ -176,12 +177,22 @@ bool ZLauncher::parseConfig()
 
 bool ZLauncher::launchGame(HANDLE job)
 {
-    return Process::start(&pemu, cemu, cemu_cmdline, cemu_path, job);
+    if(Process::start(&pemu, cemu, cemu_cmdline, cemu_path, job, false))
+    {
+        if(!Process::setAffinity(pemu.hProcess, cemu_cores))
+        {
+            ZLauncher::showError();
+        }
+
+        return true;
+    }
+
+    return false;
 }
 
 bool ZLauncher::launchSpeedhack(HANDLE job)
 {
-    return Process::start(&psh, speedhack_path, str(), Utils::getCurrentDir(), job);
+    return Process::start(&psh, speedhack_path, str(), Utils::getCurrentDir(), job, false);
 }
 
 bool ZLauncher::restartElevated(bool launched)
