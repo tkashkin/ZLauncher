@@ -6,6 +6,7 @@ The Legend of Zelda: Breath of the Wild custom launcher
 * Launch speedhack (CheatEngine standalone trainer)
 * Supports launching from Steam library as Non-Steam game
 * Launch game through Steam with admin priveleges
+* Set CPU affinity (CPU cores) for Cemu
 
 ## Download
 You can download binaries on [releases page](../../releases).
@@ -19,6 +20,7 @@ This is an example config file:
 [cemu]
 path=D:\Programs\Cemu                                          ; Path to Cemu
 fullscreen=true                                                ; Fullscreen
+cores=0,2,4,6                                                  ; Comma/space delimited list of allowed cores
 cmdline=                                                       ; Additional Cemu command line parameters
 
 [game]
