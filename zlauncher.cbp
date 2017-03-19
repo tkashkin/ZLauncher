@@ -19,6 +19,7 @@
 					<Add directory="include" />
 				</Compiler>
 				<Linker>
+					<Add option="-s" />
 					<Add library="shlwapi" />
 					<Add library="psapi" />
 				</Linker>
