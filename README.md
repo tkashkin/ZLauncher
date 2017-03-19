@@ -7,6 +7,9 @@ The Legend of Zelda: Breath of the Wild custom launcher
 * Supports launching from Steam library as Non-Steam game
 * Launch game through Steam with admin priveleges
 
+## Download
+You can download binaries on [releases page](../../releases)
+
 ## Configuration
 All configurations are done by `zlauncher.ini` config file.
 ZLauncher can use another config file if specified with `-config` command line parameter.
