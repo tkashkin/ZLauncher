@@ -7,6 +7,9 @@ The Legend of Zelda: Breath of the Wild custom launcher
 * Supports launching from Steam library as Non-Steam game
 * Launch game through Steam with admin priveleges
 
+## Download
+You can download binaries on [releases page](../../releases).
+
 ## Configuration
 All configurations are done by `zlauncher.ini` config file.
 ZLauncher can use another config file if specified with `-config` command line parameter.
@@ -32,6 +35,7 @@ elevate=true                                                   ; Run Steam with 
 gameid=12927812811798609920                                    ; Game id in Steam library
 ```
 
+## Steam (overlay and controller)
 You can launch game through Steam to get Steam overlay and Steam controller working:
 * Add ZLauncher into your Steam library as a Non-Steam game
 * Create desktop shortcut for this game
