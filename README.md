@@ -4,9 +4,10 @@ The Legend of Zelda: Breath of the Wild custom launcher
 ## Features
 * Launch game (both with user and admin priveleges)
 * Launch speedhack (CheatEngine standalone trainer)
-* Supports launching from Steam library as Non-Steam game
+* [Supports launching from Steam library as Non-Steam game](#steam)
 * Launch game through Steam with admin priveleges
 * Set CPU affinity (CPU cores) for Cemu
+* [Video cutscenes playback with mpv](#video-playback)
 
 ## Download
 You can download binaries on [releases page](../../releases).
@@ -31,11 +32,21 @@ elevate=true                                                   ; Run game with a
 path=.\speedhack.exe                                           ; Path to speedhack trainer
 enabled=false                                                  ; Is speedhack enabled
 
+[video]
+enabled=true                                                   ; Video playback hack enabled
+
 [steam]
 enabled=true                                                   ; Is Steam support enabled
 elevate=true                                                   ; Run Steam with admin priveleges
 gameid=12927812811798609920                                    ; Game id in Steam library
 ```
+
+## Video playback
+ZLauncher supports BotW cutscenes playback using external mpv player.
+ZLauncher reads Cemu log file and starts playing when game tries to access video file.
+To enable video playback hack:
+* Enable logging in Cemu (`Debug > Logging > Enable logging` and `Debug > Logging > File access`)
+* Set the `[video].enabled` parameter to `true`
 
 ## Steam (overlay and controller)
 You can launch game through Steam to get Steam overlay and Steam controller working:
