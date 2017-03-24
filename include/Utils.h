@@ -18,6 +18,9 @@ class Utils
         static str filename(str path);
 
         static TCHAR* chars(str s);
+
+        static wstring s2ws(string str);
+        static string ws2s(wstring wstr);
 };
 
 #endif // UTILS_H

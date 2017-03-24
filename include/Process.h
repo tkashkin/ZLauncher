@@ -7,6 +7,11 @@ using namespace std;
 
 #include "Utils.h"
 
+struct WindowHandle {
+    DWORD pid;
+    HWND handle;
+};
+
 class Process
 {
     public:

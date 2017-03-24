@@ -15,7 +15,7 @@
 					<Add option="-fexpensive-optimizations" />
 					<Add option="-O3" />
 					<Add option="-std=c++11" />
-					<Add option="-mwindows" />
+					<Add option="-mwindows -lpthread -mthreads -pthread" />
 					<Add directory="include" />
 				</Compiler>
 				<Linker>
@@ -31,6 +31,7 @@
 		</Compiler>
 		<Unit filename="include/Process.h" />
 		<Unit filename="include/Utils.h" />
+		<Unit filename="include/VideoPlayback.h" />
 		<Unit filename="include/ZLauncher.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="resources.rc">
@@ -38,6 +39,7 @@
 		</Unit>
 		<Unit filename="src/Process.cpp" />
 		<Unit filename="src/Utils.cpp" />
+		<Unit filename="src/VideoPlayback.cpp" />
 		<Unit filename="src/ZLauncher.cpp" />
 		<Unit filename="zlauncher.ico" />
 		<Unit filename="zlauncher.manifest" />

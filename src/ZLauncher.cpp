@@ -16,7 +16,7 @@ bool elevated, gameIsLaunched, launchedFromSteam;
 str cfg = L"zlauncher.ini";
 
 str cemu, cemu_path, cemu_cmdline, cemu_cores, game_path, speedhack_path, steam_path, steam_gameid, steam_cmdline;
-bool cemu_fullscreen, game_elevate, speedhack_enabled, steam_enabled, steam_elevate;
+bool cemu_fullscreen, game_elevate, speedhack_enabled, steam_enabled, steam_elevate, vp_enabled;
 
 static void mb(LPTSTR msg, LPTSTR title = L"Error", UINT flags = MB_ICONERROR)
 {
@@ -70,46 +70,66 @@ int ZLauncher::launch()
 {
     if(!this->parseConfig()) return 1;
 
+    if(!elevated)
+    {
+        str log = cemu_path + L"\\log.txt";
+        DeleteFile(c(log));
+        CloseHandle(CreateFile(c(log), GENERIC_READ, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL));
+    }
+
     int steam_res = ERR_SUCCESS;
     if(steam_enabled && !steam_path.empty()) steam_res = ZLauncher::launchWithSteam();
-
-    if(steam_res >= ERR_SUCCESS) return steam_res;
+    if(steam_enabled && steam_res >= ERR_SUCCESS) return steam_res;
 
     if(game_elevate && !elevated) return ZLauncher::restartElevated(false) ? ERR_SUCCESS : ERR_ELEVATION;
 
     if(!gameIsLaunched && !this->launchGame(elevated ? job : nullptr)) return ERR_GAME;
 
-    if(elevated)
+    if(speedhack_enabled)
     {
-        if(speedhack_enabled && !launchSpeedhack(job)) return ERR_SPEEDHACK;
-
-        if(pemu.hProcess)
+        if(elevated)
         {
-            WaitForSingleObject(pemu.hProcess, INFINITE);
-            CloseHandle(pemu.hProcess);
-            CloseHandle(pemu.hThread);
+            if(!this->launchSpeedhack(job)) return ERR_SPEEDHACK;
+
+            ZLauncher::wait();
+
+            if(psh.hProcess)
+            {
+                CloseHandle(psh.hProcess);
+                CloseHandle(psh.hThread);
+            }
         }
         else
         {
-            if(HANDLE cemu = Process::find(L"Cemu.exe"))
-            {
-                WaitForSingleObject(cemu, INFINITE);
-                CloseHandle(cemu);
-            }
-        }
-
-        if(psh.hProcess)
-        {
-            CloseHandle(psh.hProcess);
-            CloseHandle(psh.hThread);
+            ZLauncher::restartElevated();
         }
     }
     else
     {
-        ZLauncher::restartElevated();
+        ZLauncher::wait();
     }
 
     return ERR_SUCCESS;
+}
+
+void ZLauncher::wait()
+{
+    if(vp_enabled) VideoPlayback::start();
+
+    if(pemu.hProcess)
+    {
+        WaitForSingleObject(pemu.hProcess, INFINITE);
+        CloseHandle(pemu.hProcess);
+        CloseHandle(pemu.hThread);
+    }
+    else
+    {
+        if(HANDLE cemu = Process::find(L"Cemu.exe"))
+        {
+            WaitForSingleObject(cemu, INFINITE);
+            CloseHandle(cemu);
+        }
+    }
 }
 
 int ZLauncher::launchWithSteam()
@@ -135,6 +155,10 @@ int ZLauncher::launchWithSteam()
         {
             return Process::startElevated(steam_path, steam_cmdline, Utils::getCurrentDir(), nullptr, false) ? ERR_SUCCESS : ERR_STEAM_ELEVATION;
         }
+    }
+    else if(launchedFromSteam)
+    {
+        return STEAM_RUNNING;
     }
 
     return Process::start(NULL, steam_path, steam_cmdline, Utils::getCurrentDir(), nullptr, false) ? ERR_SUCCESS : ERR_STEAM_GAME;
@@ -163,6 +187,8 @@ bool ZLauncher::parseConfig()
         steam_path = Utils::readReg(HKEY_CURRENT_USER, L"SOFTWARE\\Valve\\Steam", L"SteamExe");
         steam_cmdline = L"\"" + steam_path + L"\" \"steam://rungameid/" + steam_gameid + L"\"";
     }
+
+    vp_enabled = Utils::getConfigBool(L"video", L"enabled", false);
 
     if(cemu_path.empty() || game_path.empty()) return false;
 

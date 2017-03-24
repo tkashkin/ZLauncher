@@ -7,6 +7,7 @@
 
 #include <string>
 #include <sstream>
+#include <fstream>
 #include <windows.h>
 #include <tlhelp32.h>
 #include <psapi.h>
@@ -15,6 +16,7 @@
 
 #include "Process.h"
 #include "Utils.h"
+#include "VideoPlayback.h"
 
 using namespace std;
 
@@ -34,9 +36,12 @@ typedef stringstream sstream;
 #define ERR_STEAM_ELEVATION     5
 #define ERR_STEAM_GAME          6
 
-#define STEAM_RUNNING_ELEVATED -1
+#define STEAM_RUNNING          -1
+#define STEAM_RUNNING_ELEVATED -2
 
 #define c(s) Utils::chars(s)
+
+#define VP_LOG_CHECK_INTERVAL   30
 
 #ifndef ZLAUNCHER_H
 #define ZLAUNCHER_H
@@ -55,6 +60,8 @@ class ZLauncher
         bool launchSpeedhack(HANDLE job);
 
         static bool restartElevated(bool launched = true);
+
+        static void wait();
 
         static void showError();
 

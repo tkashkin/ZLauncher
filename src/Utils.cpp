@@ -67,3 +67,12 @@ TCHAR* Utils::chars(str s)
 {
     return const_cast<TCHAR *>(s.c_str());
 }
+
+wstring Utils::s2ws(string str)
+{
+    return wstring(str.begin(), str.end());
+}
+string Utils::ws2s(wstring wstr)
+{
+    return string(wstr.begin(), wstr.end());
+}
