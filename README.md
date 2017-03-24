@@ -4,7 +4,7 @@ The Legend of Zelda: Breath of the Wild custom launcher
 ## Features
 * Launch game (both with user and admin priveleges)
 * Launch speedhack (CheatEngine standalone trainer)
-* [Supports launching from Steam library as Non-Steam game](#steam)
+* [Supports launching from Steam library as Non-Steam game](#steam-overlay-and-controller)
 * Launch game through Steam with admin priveleges
 * Set CPU affinity (CPU cores) for Cemu
 * [Video cutscenes playback with mpv](#video-playback)
