@@ -10,16 +10,20 @@
 				<Option output="bin/Release/zlauncher" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
-				<Option compiler="gcc" />
+				<Option compiler="i686-630-release-win32-dwarf-rt_v5-rev2" />
 				<Compiler>
 					<Add option="-fexpensive-optimizations" />
 					<Add option="-O3" />
 					<Add option="-std=c++11" />
-					<Add option="-mwindows -lpthread -mthreads -pthread" />
+					<Add option="-mwindows" />
+					<Add option="-DUNICODE" />
+					<Add option="-D_UNICODE" />
 					<Add directory="include" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
+					<Add option="-static-libgcc" />
+					<Add option="-static-libstdc++" />
 					<Add library="shlwapi" />
 					<Add library="psapi" />
 				</Linker>

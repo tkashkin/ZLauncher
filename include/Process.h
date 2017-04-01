@@ -1,16 +1,14 @@
 #include <vector>
 
-using namespace std;
-
 #ifndef PROCESS_H
 #define PROCESS_H
-
-#include "Utils.h"
 
 struct WindowHandle {
     DWORD pid;
     HWND handle;
 };
+
+#include "Utils.h"
 
 class Process
 {
@@ -27,7 +25,7 @@ class Process
         static str name(HANDLE process);
         static str parentName(DWORD pid = GetCurrentProcessId());
 
-        static bool setAffinity(HANDLE process, vector<int> cores);
+        static bool setAffinity(HANDLE process, std::vector<int> cores);
         static bool setAffinity(HANDLE process, str cores);
 };
 

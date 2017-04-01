@@ -1,8 +1,8 @@
 #include "ZLauncher.h"
+#include "Process.h"
+#include "Utils.h"
 
-#include <iostream>
-
-using namespace std;
+#include "VideoPlayback.h"
 
 int argsCount;
 TCHAR** args;
@@ -232,21 +232,19 @@ void ZLauncher::showError()
 
     if(err == ERROR_SUCCESS || err == ERROR_CANCELLED || err == ERROR_INVALID_HANDLE) return;
 
-    wcout << L"WinAPI error " << err;
-
     LPTSTR msg = 0;
     DWORD len = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, NULL, err, 0, (LPTSTR) &msg, 0, NULL);
 
     if(len > 0 && msg)
     {
-        wcout << L": " << msg;
+        sstream title;
+        title << L"WinAPI error " << err;
 
-        mb(msg);
+        mb(msg, c(title.str()));
+
         LocalFree(msg);
         msg = 0;
     }
-
-    wcout << endl;
 }
 
 str ZLauncher::getConfigFile()

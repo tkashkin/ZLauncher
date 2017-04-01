@@ -1,4 +1,6 @@
 #include "ZLauncher.h"
+#include "Process.h"
+
 #include <algorithm>
 
 bool Process::isElevated(HANDLE process)
@@ -175,7 +177,7 @@ str Process::parentName(DWORD pid)
     return Process::name(Process::findParent(pid));
 }
 
-bool Process::setAffinity(HANDLE process, vector<int> cores)
+bool Process::setAffinity(HANDLE process, std::vector<int> cores)
 {
     if(cores.size() == 0) return false;
 
@@ -204,7 +206,7 @@ bool Process::setAffinity(HANDLE process, str cores)
 {
     if(cores.empty()) return false;
 
-    vector<int> c;
+    std::vector<int> c;
 
     sstream ss(cores);
     int i;

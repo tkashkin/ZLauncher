@@ -1,75 +1,25 @@
-#include "ZLauncher.h"
+#include "VideoPlayback.h"
+#include "Utils.h"
+#include "Process.h"
 
+#include <string>
 #include <fstream>
 #include <iostream>
 
-string vp_log_pattern = "/vol/content/Movie/";
-string vp_log_pattern_ext = ".mp4";
-string vp_video, vp_last_video;
+std::string vp_log_pattern = "/vol/content/Movie/";
+std::string vp_video, vp_last_video;
 long long vp_last_video_time;
 
 extern HANDLE job;
 
 extern str cemu_path, game_path;
 
-static void attach(HWND child, HWND parent)
+void VideoPlayback::playVideo(std::string video)
 {
-    SetParent(child, parent);
-    DWORD style = GetWindowLong(child, GWL_STYLE);
-    style &= ~(WS_POPUP | WS_CAPTION);
-    style |= WS_CHILD;
-    SetWindowLong(child, GWL_STYLE, style);
-    RECT rc;
-    GetClientRect(parent, &rc);
-    MoveWindow(child, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, true);
-    UpdateWindow(parent);
-}
+    if(Utils::getTime() - vp_last_video_time < 30) return;
 
-static long long getTimeMS()
-{
-    static LARGE_INTEGER s_frequency;
-    static BOOL s_use_qpc = QueryPerformanceFrequency(&s_frequency);
-    if (s_use_qpc) {
-        LARGE_INTEGER now;
-        QueryPerformanceCounter(&now);
-        return (1000LL * now.QuadPart) / s_frequency.QuadPart;
-    } else {
-        return GetTickCount();
-    }
-}
-static long long getTime()
-{
-    return getTimeMS() / 1000LL;
-}
-
-static HWND waitForWindow(LPCWSTR cls, LPCWSTR title)
-{
-    HWND hwnd = 0;
-    while(!IsWindow(hwnd))
-    {
-        hwnd = FindWindow(cls, title);
-        Sleep(50);
-    }
-    return hwnd;
-}
-
-static HWND waitForChildWindow(HWND parent, LPCWSTR cls, LPCWSTR title)
-{
-    HWND hwnd = 0;
-    while(!IsWindow(hwnd))
-    {
-        hwnd = FindWindowEx(parent, NULL, cls, title);
-        Sleep(50);
-    }
-    return hwnd;
-}
-
-void VideoPlayback::playVideo(string video)
-{
-    if(getTime() - vp_last_video_time < 30) return;
-
-    HWND hCemuWnd = waitForWindow(L"wxWindowNR", NULL);
-    HWND hCemuRender = waitForChildWindow(hCemuWnd, NULL, L"Render");
+    HWND hCemuWnd = Utils::waitForWindow(L"wxWindowNR", NULL);
+    HWND hCemuRender = Utils::waitForChildWindow(hCemuWnd, NULL, L"Render");
 
     str vp_window_title = L"The Legend of Zelda: Breath of the Wild cutscene player";
 
@@ -77,10 +27,10 @@ void VideoPlayback::playVideo(string video)
     Process::start(&vp_process, L".\\mpv.exe", L"mpv --no-osc --keep-open=no --cursor-autohide=always --no-border --no-window-dragging --title=\"" + vp_window_title + L"\" \"" + game_path + L"\\content\\Movie\\" + Utils::s2ws(video) + L".mp4\"",
                    Utils::getCurrentDir(), job, false);
 
-    HWND hVPWnd = waitForWindow(NULL, c(vp_window_title));
+    HWND hVPWnd = Utils::waitForWindow(NULL, c(vp_window_title));
 
     ShowWindow(hCemuRender, SW_HIDE);
-    attach(hVPWnd, hCemuWnd);
+    Utils::attachWindow(hVPWnd, hCemuWnd);
     ShowWindow(hVPWnd, SW_SHOW);
 
     WaitForSingleObject(vp_process.hProcess, INFINITE);
@@ -89,17 +39,15 @@ void VideoPlayback::playVideo(string video)
 
     UpdateWindow(hCemuWnd);
 
-    vp_last_video_time = getTime();
+    vp_last_video_time = Utils::getTime();
 }
 
-static void processLogLine(string line)
+static void processLogLine(std::string line)
 {
     size_t pos = line.find(vp_log_pattern);
-    if(pos != string::npos)
+    if(pos != std::string::npos)
     {
-        size_t endpos = line.find(vp_log_pattern_ext);
-
-        string video = line.substr(pos + vp_log_pattern.length(), 9);
+        std::string video = line.substr(pos + vp_log_pattern.length(), 9);
 
         VideoPlayback::playVideo(video);
     }
@@ -109,15 +57,15 @@ static DWORD WINAPI logWatcherThread(LPVOID arg)
 {
     str filename = cemu_path + L"\\log.txt";
     #ifdef UNICODE
-    string fn = Utils::ws2s(filename);
+    std::string fn = Utils::ws2s(filename);
     #else
-    string fn = filename;
+    std::string fn = filename;
     #endif
 
-    ifstream ifs(fn, ios::ate);
-    streamoff p;
+    std::ifstream ifs(fn, std::ios::ate);
+    std::streamoff p;
 
-    string line;
+    std::string line;
     while(true)
     {
         //ifs.seekg(p);

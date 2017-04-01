@@ -2,9 +2,6 @@
 #define __WIN32_WINNT WINVER
 #define JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE 0x00002000
 
-#define UNICODE
-#define _UNICODE
-
 #include <string>
 #include <sstream>
 #include <fstream>
@@ -14,18 +11,12 @@
 #include <shlwapi.h>
 #include <tchar.h>
 
-#include "Process.h"
-#include "Utils.h"
-#include "VideoPlayback.h"
-
-using namespace std;
-
 #ifdef UNICODE
-typedef wstring str;
-typedef wstringstream sstream;
+typedef std::wstring str;
+typedef std::wstringstream sstream;
 #else
-typedef string str;
-typedef stringstream sstream;
+typedef std::string str;
+typedef std::stringstream sstream;
 #endif // UNICODE
 
 #define ERR_SUCCESS             0

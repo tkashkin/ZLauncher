@@ -1,5 +1,3 @@
-using namespace std;
-
 #ifndef UTILS_H
 #define UTILS_H
 
@@ -15,12 +13,19 @@ class Utils
 
         static str readReg(HKEY hive, str path, str key, str def = str());
 
+        static void attachWindow(HWND child, HWND parent);
+        static HWND waitForWindow(LPCWSTR cls, LPCWSTR title);
+        static HWND waitForChildWindow(HWND parent, LPCWSTR cls, LPCWSTR title);
+
+        static long long getTimeMS();
+        static long long getTime();
+
         static str filename(str path);
 
         static TCHAR* chars(str s);
 
-        static wstring s2ws(string str);
-        static string ws2s(wstring wstr);
+        static std::wstring s2ws(std::string str);
+        static std::string ws2s(std::wstring wstr);
 };
 
 #endif // UTILS_H

@@ -1,4 +1,4 @@
-#include "ZLauncher.h"
+#include "Utils.h"
 
 str Utils::getCurrentDir()
 {
@@ -56,6 +56,59 @@ str Utils::readReg(HKEY hive, str path, str key, str def)
     return def;
 }
 
+void Utils::attachWindow(HWND child, HWND parent)
+{
+    SetParent(child, parent);
+    DWORD style = GetWindowLong(child, GWL_STYLE);
+    style &= ~(WS_POPUP | WS_CAPTION);
+    style |= WS_CHILD;
+    SetWindowLong(child, GWL_STYLE, style);
+    RECT rc;
+    GetClientRect(parent, &rc);
+    MoveWindow(child, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, true);
+    UpdateWindow(parent);
+}
+
+HWND Utils::waitForWindow(LPCWSTR cls, LPCWSTR title)
+{
+    HWND hwnd = 0;
+    while(!IsWindow(hwnd))
+    {
+        hwnd = FindWindow(cls, title);
+        Sleep(50);
+    }
+    return hwnd;
+}
+
+HWND Utils::waitForChildWindow(HWND parent, LPCWSTR cls, LPCWSTR title)
+{
+    HWND hwnd = 0;
+    while(!IsWindow(hwnd))
+    {
+        hwnd = FindWindowEx(parent, NULL, cls, title);
+        Sleep(50);
+    }
+    return hwnd;
+}
+
+long long Utils::getTimeMS()
+{
+    static LARGE_INTEGER s_frequency;
+    static BOOL s_use_qpc = QueryPerformanceFrequency(&s_frequency);
+    if (s_use_qpc) {
+        LARGE_INTEGER now;
+        QueryPerformanceCounter(&now);
+        return (1000LL * now.QuadPart) / s_frequency.QuadPart;
+    } else {
+        return GetTickCount();
+    }
+}
+
+long long Utils::getTime()
+{
+    return Utils::getTimeMS() / 1000LL;
+}
+
 str Utils::filename(str path)
 {
     size_t pos = path.find_last_of(L"/\\");
@@ -68,11 +121,11 @@ TCHAR* Utils::chars(str s)
     return const_cast<TCHAR *>(s.c_str());
 }
 
-wstring Utils::s2ws(string str)
+std::wstring Utils::s2ws(std::string str)
 {
-    return wstring(str.begin(), str.end());
+    return std::wstring(str.begin(), str.end());
 }
-string Utils::ws2s(wstring wstr)
+std::string Utils::ws2s(std::wstring wstr)
 {
-    return string(wstr.begin(), wstr.end());
+    return std::string(wstr.begin(), wstr.end());
 }
