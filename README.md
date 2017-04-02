@@ -41,13 +41,6 @@ elevate=true                                                   ; Run Steam with 
 gameid=12927812811798609920                                    ; Game id in Steam library
 ```
 
-## Video playback
-ZLauncher supports BotW cutscenes playback using external mpv player.
-ZLauncher reads Cemu log file and starts playing when game tries to access video file.
-To enable video playback hack:
-* Enable logging in Cemu (`Debug > Logging > Enable logging` and `Debug > Logging > File access`)
-* Set the `[video].enabled` parameter to `true`
-
 ## Steam (overlay and controller)
 You can launch game through Steam to get Steam overlay and Steam controller working:
 * Add ZLauncher into your Steam library as a Non-Steam game
@@ -58,3 +51,32 @@ You can launch game through Steam to get Steam overlay and Steam controller work
 * Delete shortcut if you want
 * Set the `[steam].enabled` parameter to `true`
 * Set the `[steam].elevate` and `[game].elevate` parameters to `true` if you want to run game as admin
+
+## Video playback
+ZLauncher supports BotW cutscenes playback using external mpv player.
+ZLauncher reads Cemu log file and starts playing when game tries to access video file.
+To enable video playback hack:
+* Enable logging in Cemu (`Debug > Logging > Enable logging` and `Debug > Logging > File access`)
+* Set the `[video].enabled` parameter to `true`
+
+### ZLauncher vs [Cemuhook](https://sshnuke.net/cemuhook/)
+ZLauncher and Cemuhook works differently. Just choose what you like:
+##### Cemuhook is hooking some Cemu functions and replacing its functionality.
+###### Pros:
+ * It's integrated into Cemu.
+ * It works in another games, not BotW only.
+ * It's more seamless integration: subtitles are visible, timings are correct.
+###### Cons:
+ * It interferes with Cemu, something can break after updates.
+ * It's closed-source now.
+---
+##### ZLauncher is constantly reading Cemu log and shows cutscene in external borderless window.
+###### Pros:
+ * It doesn't touch Cemu in any way.
+ * It most likely continue to work after updates.
+###### Cons:
+ * Video is shown in separate overlay.
+ * Subtitles are hidden.
+ * Timings may be broken.
+---
+You can disable ZLauncher video playback by setting `[video].enabled` parameter to `false`. Then you can remove **mpv.exe** if you want.
