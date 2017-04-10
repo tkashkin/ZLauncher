@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!--
+This file was created by NSISDialogDesigner 1.4.2.0
+http://coolsoft.altervista.org/nsisdialogdesigner
+Do not edit manually!
+-->
+<Dialog Name="config" Title="ZLauncher" Subtitle="Configuration">
+  <CheckBox Name="cemuElevateCheckbox" Location="22, 41" Size="410, 24" Text="Run Cemu as administrator" Checked="True" TabIndex="0" onClick="cemuElevateChange" />
+  <Label Name="cemuDirLabel" Location="20, 21" Size="96, 17" Text="Cemu directory:" TabIndex="1" />
+  <Link Name="readmeLink" Location="12, 202" Size="152, 17" Text="More configuration options..." TabIndex="2" onClick="openConfigReadme" />
+  <DirRequest Name="cemuDirPicker" Location="122, 18" Size="310, 20" Text="D:\Cemu" TabIndex="3" DialogHeader="Choose Cemu directory:" onChange="cemuDirPicked" />
+  <GroupBox Name="vpGroup" Location="232, 116" Size="136, 49" Text="Video playback" TabIndex="4">
+    <CheckBox Name="vpEnableCheckbox" Location="71, 19" Size="59, 24" Text="Enable" TabIndex="0" Enabled="False" />
+    <CheckBox Name="vpInstallCheckbox" Location="10, 19" Size="55, 24" Text="Install" TabIndex="1" onClick="vpInstallChange" />
+  </GroupBox>
+  <GroupBox Name="speedhackGroup" Location="90, 116" Size="136, 49" Text="Speedhack" TabIndex="5">
+    <CheckBox Name="speedhackEnableCheckbox" Location="71, 19" Size="59, 24" Text="Enable" TabIndex="0" Enabled="False" />
+    <CheckBox Name="speedhackInstallCheckbox" Location="10, 19" Size="55, 24" Text="Install" TabIndex="1" onClick="speedhackInstallChange" />
+  </GroupBox>
+  <Label Name="gameDirLabel" Location="20, 78" Size="96, 17" Text="Game directory:" TabIndex="6" />
+  <DirRequest Name="gameDirPicker" Location="122, 75" Size="310, 20" Text="D:\The Legend of Zelda - Breath of the Wild" TabIndex="7" DialogHeader="Choose game directory:" onChange="gameDirPicked" />
+</Dialog>
