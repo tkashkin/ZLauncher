@@ -7,6 +7,7 @@
 
 ; handle variables
 Var hCtl_config
+Var hCtl_config_downloadLabel
 Var hCtl_config_cemuElevateCheckbox
 Var hCtl_config_cemuDirLabel
 Var hCtl_config_readmeLink
@@ -33,6 +34,11 @@ Function fnc_config_Create
     Abort
   ${EndIf}
   !insertmacro MUI_HEADER_TEXT "ZLauncher" "Configuration"
+  
+  ; === downloadLabel (type: Label) ===
+  ${NSD_CreateLabel} 17.77u 41.85u 263.29u 16.62u "Downloading..."
+  Pop $hCtl_config_downloadLabel
+  ShowWindow $hCtl_config_downloadLabel ${SW_HIDE}
   
   ; === cemuElevateCheckbox (type: Checkbox) ===
   ${NSD_CreateCheckbox} 14.48u 25.23u 269.87u 14.77u "Run Cemu as administrator"

@@ -13,6 +13,8 @@ InstallDir "$LOCALAPPDATA\ZLauncher"
 
 RequestExecutionLevel user
 
+!define MUI_CUSTOMFUNCTION_GUIINIT onGUIInit
+
 !define MUI_PAGE_HEADER_TEXT "${PRODUCT_NAME}"
 !define MUI_PAGE_HEADER_SUBTEXT "The Legend of Zelda: Breath of the Wild custom launcher"
 
@@ -59,6 +61,10 @@ Section "MainSection" SEC01
 	
 	File "..\bin\Release\zlauncher.exe"
 SectionEnd
+
+Function onGUIInit
+  Aero::Apply
+FunctionEnd
 
 Function preConfigPage
 	IfFileExists "$INSTDIR\zlauncher.ini" cfgexists
@@ -138,6 +144,31 @@ Function gameDirPicked
 	gameok:
 FunctionEnd
 
+!macro showControls _show
+	ShowWindow $hctl_config_cemuDirLabel ${_show}
+	ShowWindow $hctl_config_cemuDirPicker_Txt ${_show}
+	ShowWindow $hctl_config_cemuDirPicker_Btn ${_show}
+	ShowWindow $hctl_config_cemuElevateCheckbox ${_show}
+	ShowWindow $hctl_config_gameDirLabel ${_show}
+	ShowWindow $hctl_config_gameDirPicker_Txt ${_show}
+	ShowWindow $hctl_config_gameDirPicker_Btn ${_show}
+	ShowWindow $hctl_config_vpGroup ${_show}
+	ShowWindow $hctl_config_speedhackGroup ${_show}
+	ShowWindow $hctl_config_readmeLink ${_show}
+!macroend
+
+!macro dl _url _file
+	${If} ${FileExists} "${_file}"
+	${Else}
+		!insertmacro showControls ${SW_HIDE}
+		ShowWindow $hctl_config_downloadLabel ${SW_SHOW}
+		${NSD_SetText} $hctl_config_downloadLabel "Downloading ${_file}..."
+		inetc::get "${_url}" "$INSTDIR\${_file}"
+		ShowWindow $hctl_config_downloadLabel ${SW_HIDE}
+		!insertmacro showControls ${SW_SHOW}
+	${EndIf}
+!macroend
+
 Function configPageFinish
 	Call cemuDirPicked
 	Call gameDirPicked
@@ -160,14 +191,16 @@ Function configPageFinish
 	${EndIf}
 	
 	${If} $shinst != ${BST_UNCHECKED}
-		File "..\bin\Release\speedhack.exe"
+		!insertmacro dl "https://github.com/tkashkin/ZLauncher/releases/download/v0.3_installer/speedhack.exe" "speedhack.exe"
+		
 		${If} $shenable != ${BST_UNCHECKED}
 			WriteINIStr "$INSTDIR\zlauncher.ini" speedhack enabled true
 		${EndIf}
 	${EndIf}
 	
 	${If} $vpinst != ${BST_UNCHECKED}
-		File "..\bin\Release\mpv.exe"
+		!insertmacro dl "https://github.com/tkashkin/ZLauncher/releases/download/v0.3_installer/mpv.exe" "mpv.exe"
+		
 		${If} $vpenable != ${BST_UNCHECKED}
 			WriteINIStr "$INSTDIR\zlauncher.ini" video enabled true
 		${EndIf}
